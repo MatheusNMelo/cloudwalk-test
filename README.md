@@ -25,13 +25,13 @@ Rule-based controls combined with ML scoring for recommendation output (`approve
 ### 1) Install dependencies
 
 ```powershell
-d:/Projetos/cloudwalk-test/.venv/Scripts/python.exe -m pip install fastapi uvicorn pandas numpy missingno plotly nbformat scikit-learn xgboost seaborn matplotlib
+python.exe -m pip install fastapi uvicorn pandas numpy missingno plotly nbformat scikit-learn xgboost seaborn matplotlib
 ```
 
 ### 2) Start the server
 
 ```powershell
-d:/Projetos/cloudwalk-test/.venv/Scripts/python.exe -m uvicorn app:app --host 127.0.0.1 --port 8001
+python.exe -m uvicorn app:app --host 127.0.0.1 --port 8001
 ```
 
 ## Test Endpoints from Terminal
