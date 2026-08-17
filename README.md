@@ -1,4 +1,4 @@
-#Technical Assessment: Fraud Detection & Anti-Fraud System
+# Technical Assessment: Fraud Detection & Anti-Fraud System
 This project contains a comprehensive end-to-end solution for payment fraud detection, developed as a technical assessment for CloudWalk. The analysis and implementation are contained within the Jupyter Notebook (.ipynb).
 
 Contents of the Notebook
