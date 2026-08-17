@@ -9,7 +9,7 @@ Original file is located at
 # Content of `software-engineer-payments.md`
 """
 
-with open('/content/cloudwalk/software-engineer-payments.md', 'r') as f:
+with open('/src/software-engineer-payments.md', 'r') as f:
     md_content = f.read()
 print(md_content)
 
@@ -38,14 +38,12 @@ Let's start by examining the DataFrame's structure, including data types and non
 
 import pandas as pd
 
-file_path = '/content/cloudwalk/transactional-sample.csv'
+file_path = '/src/transactional-sample.csv'
 df = pd.read_csv(file_path)
-display(df.head())
+print(df.head())
 
-import numpy as np
 import pandas as pd
 import missingno as msno
-from google.colab import drive
 import plotly.express as px
 
 print(df.info())
@@ -126,7 +124,7 @@ device_cbk_stats['chargeback_rate'] = (device_cbk_stats['chargeback_count'] / de
 device_cbk_stats_sorted = device_cbk_stats.sort_values(by='chargeback_count', ascending=False)
 
 print("Top 10 Device IDs by Chargeback Count:")
-display(device_cbk_stats_sorted.head(10))
+print(device_cbk_stats_sorted.head(10))
 
 """###merchant_id + has_device_id"""
 
@@ -148,7 +146,7 @@ merchant_device_cbk_stats_sorted = merchant_device_cbk_stats.sort_values(
 )
 
 print("Top 10 Merchant IDs by Chargeback Rate (grouped by has_device_id):")
-display(merchant_device_cbk_stats_sorted.head(10))
+print(merchant_device_cbk_stats_sorted.head(10))
 
 # Visualize the top N merchant-device_id combinations with the highest chargeback rates
 min_transactions_merchant = 5 # Set a threshold for meaningful rates
@@ -197,7 +195,7 @@ user_device_cbk_stats_sorted = user_device_cbk_stats.sort_values(
 )
 
 print("Top 10 User IDs by Chargeback Rate (grouped by has_device_id):")
-display(user_device_cbk_stats_sorted.head(10))
+print(user_device_cbk_stats_sorted.head(10))
 
 # Visualize the top N user-device_id combinations with the highest chargeback rates
 min_transactions_user = 5 # Set a threshold for meaningful rates
@@ -272,7 +270,7 @@ card_device_cbk_stats_sorted = card_device_cbk_stats.sort_values(
 )
 
 print("\nTop 10 Card Numbers by Chargeback Rate (grouped by has_device_id):")
-display(card_device_cbk_stats_sorted.head(10))
+print(card_device_cbk_stats_sorted.head(10))
 
 # Visualize the top N card_number-device_id combinations with the highest chargeback rates
 min_transactions_card = 5 # Set a threshold for meaningful rates
@@ -310,7 +308,7 @@ avg_amount_by_cbk = df.groupby('has_cbk')['transaction_amount'].mean().reset_ind
 avg_amount_by_cbk.columns = ['Has Chargeback', 'Average Transaction Amount']
 
 print("Average Transaction Amount by Chargeback Status:")
-display(avg_amount_by_cbk)
+print(avg_amount_by_cbk)
 
 # Visualize this comparison using a bar chart
 fig_avg_amount_cbk = px.bar(
@@ -346,8 +344,8 @@ user_device_diversity.columns = ['user_id', 'distinct_devices_per_user']
 df_advanced = df.merge(card_user_diversity, on='card_number')
 df_advanced = df_advanced.merge(user_device_diversity, on='user_id')
 
-display(df_advanced[df_advanced['distinct_users_per_card'] > 1][['card_number', 'user_id', 'has_cbk', 'distinct_users_per_card']].head())
-display(df_advanced[['distinct_users_per_card', 'user_merchant_visit_count', 'distinct_devices_per_user', 'has_cbk']].corr()['has_cbk'])
+print(df_advanced[df_advanced['distinct_users_per_card'] > 1][['card_number', 'user_id', 'has_cbk', 'distinct_users_per_card']].head())
+print(df_advanced[['distinct_users_per_card', 'user_merchant_visit_count', 'distinct_devices_per_user', 'has_cbk']].corr()['has_cbk'])
 
 """## Temporal Pattern Analysis
 
@@ -363,7 +361,7 @@ hourly_stats['chargeback_rate'] = hourly_stats['has_cbk'] * 100
 fig_hour = px.line(hourly_stats, x='hour', y='chargeback_rate', title='Chargeback Rate by Hour of Day')
 fig_hour.show()
 
-display(df.groupby('day_of_week')['has_cbk'].mean().sort_values(ascending=False) * 100)
+print(df.groupby('day_of_week')['has_cbk'].mean().sort_values(ascending=False) * 100)
 
 """# Data Analysis Summary (Task 3.2)
 
@@ -430,7 +428,7 @@ class FeatureETL:
 etl = FeatureETL()
 
 
-file_path = '/content/cloudwalk/transactional-sample.csv'
+file_path = '/src/transactional-sample.csv'
 df_raw = pd.read_csv(file_path)
 etl.fit(df_raw)
 df_processed = etl.transform(df_raw)
@@ -499,7 +497,7 @@ df_ts['user_rolling_sum_24h'] = df_ts.groupby('user_id')['transaction_amount'].r
 df_ts.reset_index(inplace=True)
 features_ts = features + ['user_rolling_count_24h', 'user_rolling_sum_24h']
 
-display(df_ts[['user_id', 'transaction_date', 'user_rolling_count_24h', 'user_rolling_sum_24h', 'has_cbk']].tail())
+print(df_ts[['user_id', 'transaction_date', 'user_rolling_count_24h', 'user_rolling_sum_24h', 'has_cbk']].tail())
 
 """### Model Retraining with Time Series Features"""
 
