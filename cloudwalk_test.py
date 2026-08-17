@@ -8,10 +8,11 @@ Original file is located at
 
 # Content of `software-engineer-payments.md`
 """
+from pathlib import Path
 
-with open('/src/software-engineer-payments.md', 'r') as f:
+md_path = Path("src/software-engineer-payments.md")
+with md_path.open("r", encoding="utf-8") as f:
     md_content = f.read()
-print(md_content)
 
 """## Task 3.1 - Understanding the Industry
 
@@ -38,17 +39,17 @@ Let's start by examining the DataFrame's structure, including data types and non
 
 import pandas as pd
 
-file_path = '/src/transactional-sample.csv'
+file_path = 'src/transactional-sample.csv'
 df = pd.read_csv(file_path)
-print(df.head())
+#print(df.head())
 
 import pandas as pd
 import missingno as msno
 import plotly.express as px
 
-print(df.info())
+#print(df.info())
 
-print(df.describe())
+#print(df.describe())
 
 """## Nan Device_id Exploring"""
 
@@ -58,29 +59,29 @@ cbk_counts = df['has_cbk'].value_counts().reset_index()
 cbk_counts.columns = ['has_cbk', 'count']
 
 fig = px.pie(cbk_counts, values='count', names='has_cbk', title='Distribution of Chargebacks')
-fig.show()
+#fig.show()
 
 df_nan = df[~df['device_id'].isna()]
 cbk_counts = df_nan['has_cbk'].value_counts().reset_index()
 cbk_counts.columns = ['has_cbk', 'count']
 
 fig = px.pie(cbk_counts, values='count', names='has_cbk', title='Distribution of Chargebacks where device_id is clean')
-fig.show()
+#fig.show()
 
 df_nan = df[df['device_id'].isna()]
 cbk_counts = df_nan['has_cbk'].value_counts().reset_index()
 cbk_counts.columns = ['has_cbk', 'count']
 
 fig = px.pie(cbk_counts, values='count', names='has_cbk', title='Distribution of Chargebacks where device_id is nan')
-fig.show()
+#fig.show()
 
 # Calculate the average transaction_amount for transactions with device_id (clean)
 avg_amount_with_device = df[~df['device_id'].isna()]['transaction_amount'].mean()
-print(f"Average transaction amount WITH device_id: {avg_amount_with_device:.2f}")
+#print(f"Average transaction amount WITH device_id: {avg_amount_with_device:.2f}")
 
 # Calculate the average transaction_amount for transactions without device_id (NaN)
 avg_amount_without_device = df[df['device_id'].isna()]['transaction_amount'].mean()
-print(f"Average transaction amount WITHOUT device_id: {avg_amount_without_device:.2f}")
+#print(f"Average transaction amount WITHOUT device_id: {avg_amount_without_device:.2f}")
 
 # Optionally, visualize this comparison using a bar chart
 comparison_data = pd.DataFrame({
@@ -98,7 +99,7 @@ fig_avg_amount = px.bar(
         'Average Transaction Amount': 'Average Transaction Amount'
     }
 )
-fig_avg_amount.show()
+#fig_avg_amount.show()
 
 """### Conclusion: null device_ids dont seem to have a direct impact on has_cbk column visually, so a new feature is going to be created so it can be understood by the model: "has_device_id"
 """
@@ -123,8 +124,8 @@ device_cbk_stats['chargeback_rate'] = (device_cbk_stats['chargeback_count'] / de
 
 device_cbk_stats_sorted = device_cbk_stats.sort_values(by='chargeback_count', ascending=False)
 
-print("Top 10 Device IDs by Chargeback Count:")
-print(device_cbk_stats_sorted.head(10))
+#print("Top 10 Device IDs by Chargeback Count:")
+#print(device_cbk_stats_sorted.head(10))
 
 """###merchant_id + has_device_id"""
 
@@ -145,8 +146,8 @@ merchant_device_cbk_stats_sorted = merchant_device_cbk_stats.sort_values(
     ascending=[False, False, False]
 )
 
-print("Top 10 Merchant IDs by Chargeback Rate (grouped by has_device_id):")
-print(merchant_device_cbk_stats_sorted.head(10))
+#print("Top 10 Merchant IDs by Chargeback Rate (grouped by has_device_id):")
+#print(merchant_device_cbk_stats_sorted.head(10))
 
 # Visualize the top N merchant-device_id combinations with the highest chargeback rates
 min_transactions_merchant = 5 # Set a threshold for meaningful rates
@@ -169,7 +170,7 @@ if not top_merchants_to_plot.empty:
         hover_data=['total_transactions', 'chargeback_count']
     )
     fig_top_merchants_cbk.update_layout(xaxis_type='category') # Treat merchant_id as a category
-    fig_top_merchants_cbk.show()
+    #fig_top_merchants_cbk.show()
 else:
     print(f"No merchant-device_id combinations found with at least {min_transactions_merchant} transactions to plot top chargeback rates.")
 
@@ -194,8 +195,8 @@ user_device_cbk_stats_sorted = user_device_cbk_stats.sort_values(
     ascending=[False, False, False]
 )
 
-print("Top 10 User IDs by Chargeback Rate (grouped by has_device_id):")
-print(user_device_cbk_stats_sorted.head(10))
+#print("Top 10 User IDs by Chargeback Rate (grouped by has_device_id):")
+#print(user_device_cbk_stats_sorted.head(10))
 
 # Visualize the top N user-device_id combinations with the highest chargeback rates
 min_transactions_user = 5 # Set a threshold for meaningful rates
@@ -218,19 +219,16 @@ if not top_users_to_plot.empty:
         hover_data=['total_transactions', 'chargeback_count']
     )
     fig_top_users_cbk.update_layout(xaxis_type='category') # Treat user_id as a category
-    fig_top_users_cbk.show()
+    #fig_top_users_cbk.show()
 else:
     print(f"No user-device_id combinations found with at least {min_transactions_user} transactions to plot top chargeback rates.")
 
 """###transaction_date"""
 
-# Convert 'transaction_date' to datetime objects for proper sorting and time-series analysis
 df['transaction_date'] = pd.to_datetime(df['transaction_date'])
 
-# Sort the DataFrame by 'transaction_date'
 df_sorted = df.sort_values(by='transaction_date').reset_index(drop=True)
 
-# Create a scatter plot to visualize transaction amount over time, colored by chargeback status
 fig = px.scatter(
     df_sorted,
     x='transaction_date',
@@ -246,34 +244,30 @@ fig = px.scatter(
 )
 
 fig.update_layout(xaxis_title='Date', yaxis_title='Transaction Amount')
-fig.show()
+#fig.show()
 
-print("\nNote: To analyze 'number of tries', we would need to derive a feature that counts consecutive transactions for a user or device within a specific time window, as this information is not directly present in the raw columns.")
+#print("\nNote: To analyze 'number of tries', we would need to derive a feature that counts consecutive transactions for a user or device within a specific time window, as this information is not directly present in the raw columns.")
 
 """###card_number + has_device_id"""
 
-# Group by card_number and has_device_id to analyze chargeback rates
 card_device_cbk_stats = df.groupby(['card_number', 'has_device_id'])['has_cbk'].agg(
     total_transactions='count',
     chargeback_count=lambda x: (x == True).sum()
 ).reset_index()
 
-# Calculate the chargeback rate for each card_number-device_id combination
 card_device_cbk_stats['chargeback_rate'] = (
     card_device_cbk_stats['chargeback_count'] / card_device_cbk_stats['total_transactions']
 ) * 100
 
-# Sort by chargeback_rate (descending), then by total_transactions (descending) to prioritize significant cases
 card_device_cbk_stats_sorted = card_device_cbk_stats.sort_values(
     by=['chargeback_rate', 'total_transactions', 'chargeback_count'],
     ascending=[False, False, False]
 )
 
-print("\nTop 10 Card Numbers by Chargeback Rate (grouped by has_device_id):")
-print(card_device_cbk_stats_sorted.head(10))
+#print("\nTop 10 Card Numbers by Chargeback Rate (grouped by has_device_id):")
+#print(card_device_cbk_stats_sorted.head(10))
 
-# Visualize the top N card_number-device_id combinations with the highest chargeback rates
-min_transactions_card = 5 # Set a threshold for meaningful rates
+min_transactions_card = 5
 top_cards_to_plot = card_device_cbk_stats_sorted[
     card_device_cbk_stats_sorted['total_transactions'] >= min_transactions_card
 ].head(10)
@@ -293,7 +287,7 @@ if not top_cards_to_plot.empty:
         hover_data=['total_transactions', 'chargeback_count']
     )
     fig_top_cards_cbk.update_layout(xaxis_type='category') # Treat card_number as a category
-    fig_top_cards_cbk.show()
+    #fig_top_cards_cbk.show()
 else:
     print(f"No card_number-device_id combinations found with at least {min_transactions_card} transactions to plot top chargeback rates.")
 
@@ -303,14 +297,12 @@ has_device_id seems to be a impactful feature, not only that but historical info
 ## Transaction amount and chargeback
 """
 
-# Calculate the average transaction amount for transactions with and without chargebacks
 avg_amount_by_cbk = df.groupby('has_cbk')['transaction_amount'].mean().reset_index()
 avg_amount_by_cbk.columns = ['Has Chargeback', 'Average Transaction Amount']
 
-print("Average Transaction Amount by Chargeback Status:")
-print(avg_amount_by_cbk)
+#print("Average Transaction Amount by Chargeback Status:")
+#print(avg_amount_by_cbk)
 
-# Visualize this comparison using a bar chart
 fig_avg_amount_cbk = px.bar(
     avg_amount_by_cbk,
     x='Has Chargeback',
@@ -322,7 +314,7 @@ fig_avg_amount_cbk = px.bar(
     },
     color='Has Chargeback'
 )
-fig_avg_amount_cbk.show()
+#fig_avg_amount_cbk.show()
 
 """## Entity Diversity and Affinity Analysis
 
@@ -344,8 +336,8 @@ user_device_diversity.columns = ['user_id', 'distinct_devices_per_user']
 df_advanced = df.merge(card_user_diversity, on='card_number')
 df_advanced = df_advanced.merge(user_device_diversity, on='user_id')
 
-print(df_advanced[df_advanced['distinct_users_per_card'] > 1][['card_number', 'user_id', 'has_cbk', 'distinct_users_per_card']].head())
-print(df_advanced[['distinct_users_per_card', 'user_merchant_visit_count', 'distinct_devices_per_user', 'has_cbk']].corr()['has_cbk'])
+#print(df_advanced[df_advanced['distinct_users_per_card'] > 1][['card_number', 'user_id', 'has_cbk', 'distinct_users_per_card']].head())
+#print(df_advanced[['distinct_users_per_card', 'user_merchant_visit_count', 'distinct_devices_per_user', 'has_cbk']].corr()['has_cbk'])
 
 """## Temporal Pattern Analysis
 
@@ -359,9 +351,9 @@ hourly_stats = df.groupby('hour')['has_cbk'].mean().reset_index()
 hourly_stats['chargeback_rate'] = hourly_stats['has_cbk'] * 100
 
 fig_hour = px.line(hourly_stats, x='hour', y='chargeback_rate', title='Chargeback Rate by Hour of Day')
-fig_hour.show()
+#fig_hour.show()
 
-print(df.groupby('day_of_week')['has_cbk'].mean().sort_values(ascending=False) * 100)
+#print(df.groupby('day_of_week')['has_cbk'].mean().sort_values(ascending=False) * 100)
 
 """# Data Analysis Summary (Task 3.2)
 
@@ -428,7 +420,7 @@ class FeatureETL:
 etl = FeatureETL()
 
 
-file_path = '/src/transactional-sample.csv'
+file_path = 'src/transactional-sample.csv'
 df_raw = pd.read_csv(file_path)
 etl.fit(df_raw)
 df_processed = etl.transform(df_raw)
@@ -473,7 +465,7 @@ for name, model in models.items():
     probs = model.predict_proba(X_test)[:, 1]
     auc_score = roc_auc_score(y_test, probs)
     results[name] = auc_score
-    print(f"{name} AUC-ROC: {auc_score:.4f}")
+    #print(f"{name} AUC-ROC: {auc_score:.4f}")
 
 rf_final = models["Random Forest"]
 
@@ -495,9 +487,10 @@ df_ts['user_rolling_count_24h'] = df_ts.groupby('user_id')['transaction_id'].rol
 df_ts['user_rolling_sum_24h'] = df_ts.groupby('user_id')['transaction_amount'].rolling('24h').sum().values
 
 df_ts.reset_index(inplace=True)
-features_ts = features + ['user_rolling_count_24h', 'user_rolling_sum_24h']
+additional_ts_features = ['user_rolling_count_24h', 'user_rolling_sum_24h']
+features_ts = list(dict.fromkeys(features + additional_ts_features))
 
-print(df_ts[['user_id', 'transaction_date', 'user_rolling_count_24h', 'user_rolling_sum_24h', 'has_cbk']].tail())
+#print(df_ts[['user_id', 'transaction_date', 'user_rolling_count_24h', 'user_rolling_sum_24h', 'has_cbk']].tail())
 
 """### Model Retraining with Time Series Features"""
 
@@ -510,8 +503,8 @@ rf_ts = RandomForestClassifier(n_estimators=100, random_state=42)
 rf_ts.fit(X_train_ts, y_train_ts)
 
 probs_ts = rf_ts.predict_proba(X_test_ts)[:, 1]
-print(f"Random Forest (Time Series Optimized) AUC-ROC: {roc_auc_score(y_test_ts, probs_ts):.4f}")
-print(classification_report(y_test_ts, rf_ts.predict(X_test_ts)))
+#print(f"Random Forest (Time Series Optimized) AUC-ROC: {roc_auc_score(y_test_ts, probs_ts):.4f}")
+#print(classification_report(y_test_ts, rf_ts.predict(X_test_ts)))
 results["Random Forest (Time Series Optimized)"] = roc_auc_score(y_test_ts, probs_ts)
 
 """### Final Model Performance Comparison
@@ -536,9 +529,9 @@ fig = px.bar(
     color_continuous_scale='Viridis'
 )
 fig.update_layout(yaxis_range=[0.8, 1.0])
-fig.show()
+#fig.show()
 
-print("The inclusion of behavioral and diversity features provides a comprehensive view of transaction risk, particularly benefiting ensemble methods.")
+#print("The inclusion of behavioral and diversity features provides a comprehensive view of transaction risk, particularly benefiting ensemble methods.")
 
 """###Final Implementation"""
 
@@ -590,4 +583,4 @@ test_payload = {
   "transaction_amount" : 373,
   "device_id" : 285475
 }
-print(antifraud_engine.evaluate(test_payload))
+#print(antifraud_engine.evaluate(test_payload))

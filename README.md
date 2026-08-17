@@ -1,31 +1,90 @@
 # Technical Assessment: Fraud Detection & Anti-Fraud System
-This project contains a comprehensive end-to-end solution for payment fraud detection, developed as a technical assessment for CloudWalk. The analysis and implementation are contained within the Jupyter Notebook (.ipynb), the .py file contains the raw python code inside the notebook.
 
-## Contents of the Notebook
-Industry Analysis (Task 3.1): A detailed breakdown of the payments ecosystem, covering money and information flows, the roles of key players (Acquirers, Gateways, Sub-acquirers), and the dynamics of chargebacks vs. cancellations.
+This project contains an end-to-end fraud detection solution developed as a technical assessment for CloudWalk.
 
-Exploratory Data Analysis (Task 3.2): A deep dive into transactional data to identify suspicious patterns, including behavioral velocity, entity risk history, and temporal fraud spikes.
-Machine Learning Pipeline: Implementation of a FeatureETL class that handles automated feature engineering, including rolling 24-hour windows and entity diversity metrics. It evaluates multiple models (Logistic Regression, XGBoost, Random Forest), with the Random Forest model achieving an AUC-ROC of 0.928.
+- Notebook analysis: `clouwalk_test.ipynb`
+- Script version of notebook logic: `cloudwalk_test.py`
+- FastAPI endpoint: `app.py`
 
-Hybrid Anti-Fraud System (Task 3.3): A production-ready engine that combines business rules (hard limits on amounts, blacklisted users, and transaction velocity) with the predictive ML model.
+## Project Scope
 
-# How to Use the Model
-The AntiFraudSystem is designed for real-time evaluation. You can pass a standard transaction payload to the engine to receive an automated recommendation.
+1. Industry Analysis (Task 3.1)
+A breakdown of acquiring flows, key players, and chargeback dynamics.
 
-# Example usage of the Anti-Fraud Engine
+2. Exploratory Data Analysis (Task 3.2)
+Pattern analysis on transactional behavior, entity history, and temporal fraud risk.
+
+3. Machine Learning Pipeline
+Feature engineering with rolling 24h metrics and entity diversity features, plus model benchmarking (Logistic Regression, XGBoost, Random Forest).
+
+4. Hybrid Anti-Fraud System (Task 3.3)
+Rule-based controls combined with ML scoring for recommendation output (`approve` or `deny`).
+
+## Run the API
+
+### 1) Install dependencies
+
+```powershell
+d:/Projetos/cloudwalk-test/.venv/Scripts/python.exe -m pip install fastapi uvicorn pandas numpy missingno plotly nbformat scikit-learn xgboost seaborn matplotlib
+```
+
+### 2) Start the server
+
+```powershell
+d:/Projetos/cloudwalk-test/.venv/Scripts/python.exe -m uvicorn app:app --host 127.0.0.1 --port 8001
+```
+
+## Test Endpoints from Terminal
+
+### Health check
+
+```powershell
+Invoke-RestMethod -Method Get -Uri http://127.0.0.1:8001/health | ConvertTo-Json
+```
+
+Expected response:
+
+```json
+{"status":"ok"}
+```
+
+### Evaluate transaction
+
+```powershell
+$body = @{
+  transaction_id = 1
+  merchant_id = 29744
+  user_id = 97051
+  card_number = "434505******9116"
+  transaction_date = "2019-11-30T23:16:32.812632"
+  transaction_amount = 373
+  device_id = 285475
+} | ConvertTo-Json
+
+Invoke-RestMethod -Method Post -Uri http://127.0.0.1:8001/evaluate -ContentType "application/json" -Body $body | ConvertTo-Json
+```
+
+Example response:
+
+```json
+{"transaction_id":1,"recommendation":"approve"}
+```
+
+## Direct Python Usage (Without API)
+
+```python
+from cloudwalk_test import antifraud_engine
+
 test_payload = {
-  "transaction_id" : 2342357,
-  "merchant_id" : 29744,
-  "user_id" : 97051,
-  "card_number" : "434505******9116",
-  "transaction_date" : "2019-11-30T23:16:32.812632",
-  "transaction_amount" : 373,
-  "device_id" : 285475
+    "transaction_id": 2342357,
+    "merchant_id": 29744,
+    "user_id": 97051,
+    "card_number": "434505******9116",
+    "transaction_date": "2019-11-30T23:16:32.812632",
+    "transaction_amount": 373,
+    "device_id": 285475,
 }
 
-### The engine returns a JSON-style recommendation
 result = antifraud_engine.evaluate(test_payload)
-
 print(result)
-
-### Output: {'transaction_id': 2342357, 'recommendation': 'approve'}
+```
