@@ -25,5 +25,7 @@ test_payload = {
 
 # The engine returns a JSON-style recommendation
 result = antifraud_engine.evaluate(test_payload)
+
 print(result)
-## Output: {'transaction_id': 2342357, 'recommendation': 'approve'}
+
+### Output: {'transaction_id': 2342357, 'recommendation': 'approve'}
