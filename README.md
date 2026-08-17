@@ -3,10 +3,13 @@ This project contains a comprehensive end-to-end solution for payment fraud dete
 
 Contents of the Notebook
 Industry Analysis (Task 3.1): A detailed breakdown of the payments ecosystem, covering money and information flows, the roles of key players (Acquirers, Gateways, Sub-acquirers), and the dynamics of chargebacks vs. cancellations.
+
 Exploratory Data Analysis (Task 3.2): A deep dive into transactional data to identify suspicious patterns, including behavioral velocity, entity risk history, and temporal fraud spikes.
 Machine Learning Pipeline: Implementation of a FeatureETL class that handles automated feature engineering, including rolling 24-hour windows and entity diversity metrics. It evaluates multiple models (Logistic Regression, XGBoost, Random Forest), with the Random Forest model achieving an AUC-ROC of 0.928.
+
 Hybrid Anti-Fraud System (Task 3.3): A production-ready engine that combines business rules (hard limits on amounts, blacklisted users, and transaction velocity) with the predictive ML model.
-How to Use the Model
+
+# How to Use the Model
 The AntiFraudSystem is designed for real-time evaluation. You can pass a standard transaction payload to the engine to receive an automated recommendation.
 
 # Example usage of the Anti-Fraud Engine
